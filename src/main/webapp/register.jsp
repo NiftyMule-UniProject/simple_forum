@@ -5,6 +5,7 @@
     <title>Register</title>
 </head>
 <body>
+<h2><a href="${pageContext.request.contextPath}/">Homepage</a></h2>
 <h1>Login</h1>
 <form action="${pageContext.request.contextPath}/register" method="post">
     <br/>
