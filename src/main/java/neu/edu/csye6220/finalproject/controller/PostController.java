@@ -4,15 +4,19 @@ import neu.edu.csye6220.finalproject.dao.CommentDao;
 import neu.edu.csye6220.finalproject.dao.PostDao;
 import neu.edu.csye6220.finalproject.model.Comment;
 import neu.edu.csye6220.finalproject.model.Post;
+import neu.edu.csye6220.finalproject.model.PostType;
 import neu.edu.csye6220.finalproject.service.CommentService;
 import neu.edu.csye6220.finalproject.service.PostService;
+import neu.edu.csye6220.finalproject.service.PostTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.awt.event.MouseEvent;
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
@@ -27,9 +31,7 @@ public class PostController
     CommentService commentService;
 
     @Autowired
-    PostDao postDao;
-    @Autowired
-    CommentDao commentDao;
+    PostTypeService postTypeService;
 
     @GetMapping("/posts")
     public ModelAndView posts()
@@ -48,10 +50,49 @@ public class PostController
         return ret;
     }
 
+    @GetMapping("/create_post")
+    public ModelAndView postCreationForm()
+    {
+        List<PostType> postTypes = postTypeService.getAllTypes();
+        return new ModelAndView("postCreation", "types", postTypes);
+    }
+
+    @PostMapping("/post")
+    public ModelAndView postCreation(
+            @RequestParam("title") String title,
+            @RequestParam("type") int type,
+            @RequestParam("content") String content,
+            Principal principal
+    )
+    {
+        ModelAndView view = new ModelAndView();
+        List<PostType> postTypes = postTypeService.getAllTypes();
+        String errMsg = postService.createPost(title, type, content, principal);
+        if (errMsg == null)
+        {
+            view.setViewName("redirect:/posts");
+            return view;
+        }
+        view.setViewName("postCreation");
+        view.addObject("title", title);
+        view.addObject("postType", type);
+        view.addObject("postContent", content);
+        view.addObject("types", postTypes);
+        view.addObject("errMsg", errMsg);
+        return view;
+    }
+
+
+    // TODO - To be deleted
+    @Autowired
+    PostDao postDao;
+    @Autowired
+    CommentDao commentDao;
     @GetMapping("/populate_posts")
     @ResponseBody
     public String populatePosts(Post post)
     {
+        post.setTitle("This is a title");
         post.setUserId(1L);
         post.setUsername("username");
         post.setContent("This is a test content!");

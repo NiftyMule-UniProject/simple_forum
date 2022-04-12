@@ -6,6 +6,8 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class PostTypeDaoImpl implements PostTypeDao
 {
@@ -50,5 +52,11 @@ public class PostTypeDaoImpl implements PostTypeDao
         session.merge(postType);
 
         session.getTransaction().commit();
+    }
+
+    @Override
+    public List<PostType> list() {
+        String hql = "FROM PostType";
+        return getSession().createQuery(hql, PostType.class).getResultList();
     }
 }

@@ -23,7 +23,7 @@ public class Post
     @Column(name = "creation_time", nullable = false)
     private Timestamp creationTime;
 
-    @Column(name = "last_comment_time", nullable = false)
+    @Column(name = "last_comment_time")
     private Timestamp lastCommentTime;
 
     @Column(name = "upvote", nullable = false)
@@ -36,6 +36,19 @@ public class Post
 
     @Column(name = "username", nullable = false)
     private String username;
+
+    @Column(name = "title")
+    private String title;
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
 
     public String getUsername()
     {
