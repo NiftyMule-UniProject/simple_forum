@@ -5,8 +5,6 @@ import neu.edu.csye6220.finalproject.dao.PostTypeDao;
 import neu.edu.csye6220.finalproject.dao.UserDao;
 import neu.edu.csye6220.finalproject.model.Post;
 import neu.edu.csye6220.finalproject.model.PostType;
-import neu.edu.csye6220.finalproject.model.User;
-import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

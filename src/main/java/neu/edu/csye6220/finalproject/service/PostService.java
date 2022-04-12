@@ -1,7 +1,6 @@
 package neu.edu.csye6220.finalproject.service;
 
 import neu.edu.csye6220.finalproject.model.Post;
-import neu.edu.csye6220.finalproject.model.PostType;
 
 import java.security.Principal;
 import java.util.List;

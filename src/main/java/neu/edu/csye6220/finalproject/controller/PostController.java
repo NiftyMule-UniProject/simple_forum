@@ -9,13 +9,10 @@ import neu.edu.csye6220.finalproject.service.CommentService;
 import neu.edu.csye6220.finalproject.service.PostService;
 import neu.edu.csye6220.finalproject.service.PostTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.awt.event.MouseEvent;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.Instant;
