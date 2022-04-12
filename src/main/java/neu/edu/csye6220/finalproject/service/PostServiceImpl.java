@@ -1,11 +1,14 @@
 package neu.edu.csye6220.finalproject.service;
 
+import neu.edu.csye6220.finalproject.dao.CommentDao;
 import neu.edu.csye6220.finalproject.dao.PostDao;
 import neu.edu.csye6220.finalproject.dao.PostTypeDao;
 import neu.edu.csye6220.finalproject.dao.UserDao;
+import neu.edu.csye6220.finalproject.model.Comment;
 import neu.edu.csye6220.finalproject.model.Post;
 import neu.edu.csye6220.finalproject.model.PostType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -24,6 +27,9 @@ public class PostServiceImpl implements PostService
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    CommentDao commentDao;
 
     @Override
     public Post getPostById(Long id)
@@ -57,6 +63,29 @@ public class PostServiceImpl implements PostService
         post.setUpvote(0);
 
         postDao.add(post);
+        return null;
+    }
+
+    @Override
+    public String deletePost(
+            long postId,
+            Authentication authentication
+    )
+    {
+        Post post = postDao.get(postId);
+        if (post == null) return "Invalid post ID!";
+
+        boolean isAdmin = false;
+        for (var auth : authentication.getAuthorities())
+            if (auth.getAuthority().equals("admin")) isAdmin = true;
+
+        if (!post.getUsername().equals(authentication.getName()) && !isAdmin)
+            return "Unauthorized action";
+
+        postDao.delete(postId);
+        for (Comment comment : commentDao.getCommentsByPostId(postId))
+            commentDao.delete(comment.getId());
+
         return null;
     }
 

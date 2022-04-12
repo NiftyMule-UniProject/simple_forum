@@ -45,10 +45,11 @@ Upvote: ${post.upvote} <br/>
             data: data,
             method: "POST",
             success: function (data, status, xhr) {
+                // TODO - update comment list
                 alert(data)
             },
             error: function (jqXhr, textStatus, errorMessage) {
-                alert("something went wrong when adding comment: " + errorMessage)
+                alert("something went wrong when adding comment: " + jqXhr.responseText)
             }
         })
         return false
