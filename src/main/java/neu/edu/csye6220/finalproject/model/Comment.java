@@ -17,9 +17,6 @@ public class Comment
     @Column(name = "post_id", nullable = false)
     private Long postId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     @Column(name = "creation_time", nullable = false)
     private Timestamp creationTime;
 
@@ -85,16 +82,6 @@ public class Comment
     public void setCreationTime(Timestamp creationTime)
     {
         this.creationTime = creationTime;
-    }
-
-    public Long getUserId()
-    {
-        return userId;
-    }
-
-    public void setUserId(Long userId)
-    {
-        this.userId = userId;
     }
 
     public Long getPostId()

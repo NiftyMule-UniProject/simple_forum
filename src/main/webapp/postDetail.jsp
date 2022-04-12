@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -16,9 +17,8 @@ Content: ${post.content} <br/>
 Upvote: ${post.upvote} <br/>
 <hr>
 <hr>
-<hr>
-<hr>
 <c:forEach items="${comments}" var="comment">
+    Comment ID: ${comment.id} <br/>
     Creation time: ${comment.creationTime} <br/>
     Refer to: ${comment.referToCommentId} <br/>
     Author: ${comment.username} <br/>
@@ -27,5 +27,31 @@ Upvote: ${post.upvote} <br/>
     <hr>
 </c:forEach>
 
+<form id="comment_creation">
+    <label for="referTo">Refer To:</label>
+    <input type="text" id="referTo" name="referTo"> <br/>
+
+    <label for="content">Content</label>
+    <textarea id="content" name="content"></textarea><br/>
+
+    <input type="submit">
+</form>
+
 </body>
+<script>
+    $('#comment_creation').submit(function () {
+        const data = $("#comment_creation").serialize()
+        $.ajax("/api/post/${post.id}/comment", {
+            data: data,
+            method: "POST",
+            success: function (data, status, xhr) {
+                alert(data)
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when adding comment: " + errorMessage)
+            }
+        })
+        return false
+    })
+</script>
 </html>

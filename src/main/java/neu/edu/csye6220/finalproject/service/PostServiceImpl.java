@@ -51,13 +51,11 @@ public class PostServiceImpl implements PostService
         if (!validatePostType(postTypeId)) return "Invalid post type!";
 
         Post post = new Post();
-        User user = userDao.getByUsername(principal.getName());
         post.setContent(content);
         post.setCreationTime(Timestamp.from(Instant.now()));
         post.setTitle(title);
         post.setTypeId((long) postTypeId);
-        post.setUserId(user.getId());
-        post.setUsername(user.getName());
+        post.setUsername(principal.getName());
         post.setUpvote(0);
 
         postDao.add(post);

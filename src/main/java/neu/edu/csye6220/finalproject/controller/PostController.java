@@ -93,7 +93,6 @@ public class PostController
     public String populatePosts(Post post)
     {
         post.setTitle("This is a title");
-        post.setUserId(1L);
         post.setUsername("username");
         post.setContent("This is a test content!");
         post.setCreationTime(Timestamp.from(Instant.now()));
@@ -105,7 +104,6 @@ public class PostController
 
         Comment comment1 = new Comment();
 
-        comment1.setUserId(1L);
         comment1.setUsername("username");
         comment1.setContent("Test content!");
         comment1.setPostId(post.getId());
@@ -116,7 +114,6 @@ public class PostController
 
         Comment comment2 = new Comment();
 
-        comment2.setUserId(1L);
         comment2.setUsername("username");
         comment2.setContent("Test content!");
         comment2.setPostId(post.getId());

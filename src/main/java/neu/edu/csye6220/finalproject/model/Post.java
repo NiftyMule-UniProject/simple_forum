@@ -17,9 +17,6 @@ public class Post
     @Column(name = "type_id", nullable = false)
     private Long typeId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     @Column(name = "creation_time", nullable = false)
     private Timestamp creationTime;
 
@@ -70,11 +67,6 @@ public class Post
         this.content = content;
     }
 
-    public void setUserId(Long userId)
-    {
-        this.userId = userId;
-    }
-
     public void setCreationTime(Timestamp creationTime)
     {
         this.creationTime = creationTime;
@@ -103,11 +95,6 @@ public class Post
     public Timestamp getCreationTime()
     {
         return creationTime;
-    }
-
-    public Long getUserId()
-    {
-        return userId;
     }
 
     public Long getTypeId()

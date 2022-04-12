@@ -18,6 +18,8 @@ public class PostTypeDaoImpl implements PostTypeDao
         return sessionFactory.getCurrentSession();
     }
 
+    List<PostType> types = null;
+
     @Override
     public void add(PostType postType) {
         Session session = getSession();
@@ -56,7 +58,13 @@ public class PostTypeDaoImpl implements PostTypeDao
 
     @Override
     public List<PostType> list() {
-        String hql = "FROM PostType";
-        return getSession().createQuery(hql, PostType.class).getResultList();
+        // Post types are unlikely to be changed when running the application,
+        // so we cached the list of post types
+        if (types == null)
+        {
+            String hql = "FROM PostType";
+            types = getSession().createQuery(hql, PostType.class).getResultList();
+        }
+        return types;
     }
 }

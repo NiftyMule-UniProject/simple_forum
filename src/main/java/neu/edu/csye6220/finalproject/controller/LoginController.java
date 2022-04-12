@@ -49,6 +49,7 @@ public class LoginController
         {
             ret.setViewName("redirect://");
         }
+
         return ret;
     }
 }
