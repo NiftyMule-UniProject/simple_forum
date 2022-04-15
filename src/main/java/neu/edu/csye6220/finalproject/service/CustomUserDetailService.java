@@ -20,6 +20,7 @@ import java.util.List;
 @Transactional
 public class CustomUserDetailService implements UserDetailsService
 {
+    public final static int SUPERUSER_LEVEL = 1;
     @Autowired
     UserDao userDao;
 
@@ -39,7 +40,12 @@ public class CustomUserDetailService implements UserDetailsService
         boolean accountNonLocked = true;
         List<GrantedAuthority> authorities = new ArrayList<>();
         Admin admin = adminDao.getByUserId(user.getId());
-        if (admin != null) authorities.add(new SimpleGrantedAuthority("admin"));
+        if (admin != null)
+        {
+            authorities.add(new SimpleGrantedAuthority("admin"));
+            if (admin.getLevel() == SUPERUSER_LEVEL)
+                authorities.add(new SimpleGrantedAuthority("superuser"));
+        }
 
         return new org.springframework.security.core.userdetails.User(
                 user.getName(),

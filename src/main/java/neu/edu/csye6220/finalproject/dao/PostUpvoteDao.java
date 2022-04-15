@@ -11,4 +11,6 @@ public interface PostUpvoteDao
     PostUpvote get(Long id);
 
     void update(PostUpvote postUpvote);
+
+    PostUpvote getPostUpvote(long postId, long userId);
 }

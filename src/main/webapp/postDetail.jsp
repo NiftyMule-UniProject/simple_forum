@@ -15,6 +15,10 @@ Creation time: ${post.creationTime} <br/>
 Author: ${post.username} <br/>
 Content: ${post.content} <br/>
 Upvote: ${post.upvote} <br/>
+<c:choose>
+    <c:when test="${postUpvote}"> <button onclick="cancelUpvotePost(${post.id})">Cancel upvote</button> </c:when>
+    <c:otherwise> <button onclick="upvotePost(${post.id})">Upvote</button> </c:otherwise>
+</c:choose>
 <hr>
 <hr>
 <c:forEach items="${comments}" var="comment">
@@ -24,6 +28,13 @@ Upvote: ${post.upvote} <br/>
     Author: ${comment.username} <br/>
     Content: ${comment.content} <br/>
     Upvote: ${comment.upvote} <br/>
+    <c:choose>
+        <c:when test="${upvoteMap.get(comment.id)}"> <button onclick="cancelUpvoteComment(${post.id}, ${comment.id})">Cancel upvote</button> </c:when>
+        <c:otherwise> <button onclick="upvoteComment(${post.id}, ${comment.id})">Upvote</button> </c:otherwise>
+    </c:choose>
+    <sec:authorize access="principal.username.equals('${comment.username}') || hasAuthority('admin')">
+        <button onclick="deleteComment(${post.id}, ${comment.id})">delete</button>
+    </sec:authorize>
     <hr>
 </c:forEach>
 
@@ -46,7 +57,8 @@ Upvote: ${post.upvote} <br/>
             method: "POST",
             success: function (data, status, xhr) {
                 // TODO - update comment list
-                alert(data)
+                // alert(data)
+                location.reload()
             },
             error: function (jqXhr, textStatus, errorMessage) {
                 alert("something went wrong when adding comment: " + jqXhr.responseText)
@@ -54,5 +66,75 @@ Upvote: ${post.upvote} <br/>
         })
         return false
     })
+
+    function upvotePost(postId) {
+        $.ajax("/api/post/" + postId + "/upvote", {
+            method: "POST",
+            success: function (data, status, xhr) {
+                // TODO - update vote button
+                // alert(data)
+                location.reload()
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting post: " + jqXhr.responseText)
+            }
+        })
+    }
+
+    function cancelUpvotePost(postId) {
+        $.ajax("/api/post/" + postId + "/upvote", {
+            method: "DELETE",
+            success: function (data, status, xhr) {
+                // TODO - update vote button
+                // alert(data)
+                location.reload()
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting post: " + jqXhr.responseText)
+            }
+        })
+    }
+
+    function deleteComment(postId, commentId) {
+        $.ajax("/api/post/" + postId + "/comment/" + commentId, {
+            method: "DELETE",
+            success: function (data, status, xhr) {
+                // TODO - delete following line, use jQuery to update comment list
+                // alert(data)
+                location.reload()
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting comment: " + jqXhr.responseText)
+            }
+        })
+    }
+
+    function upvoteComment(postId, commentId) {
+        $.ajax("/api/post/" + postId + "/comment/" + commentId + "/upvote", {
+            method: "POST",
+            success: function (data, status, xhr) {
+                // TODO - update vote button
+                // alert(data)
+                location.reload()
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting post: " + jqXhr.responseText)
+            }
+        })
+    }
+
+    function cancelUpvoteComment(postId, commentId) {
+        $.ajax("/api/post/" + postId + "/comment/" + commentId + "/upvote", {
+            method: "DELETE",
+            success: function (data, status, xhr) {
+                // TODO - update vote button
+                // alert(data)
+                location.reload()
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting post: " + jqXhr.responseText)
+            }
+        })
+    }
 </script>
 </html>

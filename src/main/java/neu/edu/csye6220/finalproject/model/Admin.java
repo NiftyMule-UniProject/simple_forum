@@ -14,6 +14,19 @@ public class Admin
     @Column(name = "user_id", nullable = false, unique = true)
     private Long userId;
 
+    @Column(name = "level", nullable = false)
+    private Integer level;
+
+    public Integer getLevel()
+    {
+        return level;
+    }
+
+    public void setLevel(Integer level)
+    {
+        this.level = level;
+    }
+
     public Long getUserId()
     {
         return userId;

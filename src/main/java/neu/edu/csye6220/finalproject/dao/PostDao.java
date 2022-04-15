@@ -15,4 +15,6 @@ public interface PostDao
     void update(Post post);
 
     List<Post> listPosts(int nums, int offset);
+
+    long getTotalPostsNum();
 }

@@ -36,6 +36,8 @@ public class SecurityConf extends WebSecurityConfigurerAdapter
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/register").permitAll()
+                // TODO - add admin page
+//                .antMatchers("/admin").hasAnyAuthority("superuser")
                 .anyRequest().authenticated()
                 .and()
 

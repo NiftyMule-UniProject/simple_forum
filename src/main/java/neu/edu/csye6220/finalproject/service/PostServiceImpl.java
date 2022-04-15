@@ -1,12 +1,7 @@
 package neu.edu.csye6220.finalproject.service;
 
-import neu.edu.csye6220.finalproject.dao.CommentDao;
-import neu.edu.csye6220.finalproject.dao.PostDao;
-import neu.edu.csye6220.finalproject.dao.PostTypeDao;
-import neu.edu.csye6220.finalproject.dao.UserDao;
-import neu.edu.csye6220.finalproject.model.Comment;
-import neu.edu.csye6220.finalproject.model.Post;
-import neu.edu.csye6220.finalproject.model.PostType;
+import neu.edu.csye6220.finalproject.dao.*;
+import neu.edu.csye6220.finalproject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -30,6 +25,9 @@ public class PostServiceImpl implements PostService
 
     @Autowired
     CommentDao commentDao;
+
+    @Autowired
+    PostUpvoteDao postUpvoteDao;
 
     @Override
     public Post getPostById(Long id)
@@ -75,16 +73,64 @@ public class PostServiceImpl implements PostService
         Post post = postDao.get(postId);
         if (post == null) return "Invalid post ID!";
 
-        boolean isAdmin = false;
-        for (var auth : authentication.getAuthorities())
-            if (auth.getAuthority().equals("admin")) isAdmin = true;
-
-        if (!post.getUsername().equals(authentication.getName()) && !isAdmin)
+        if (!hasPermission(post, authentication))
             return "Unauthorized action";
 
         postDao.delete(postId);
         for (Comment comment : commentDao.getCommentsByPostId(postId))
             commentDao.delete(comment.getId());
+
+        return null;
+    }
+
+    @Override
+    public long getTotalPostsNum()
+    {
+        return postDao.getTotalPostsNum();
+    }
+
+    @Override
+    public boolean checkUpvoteExist(long postId, long userId)
+    {
+        return postUpvoteDao.getPostUpvote(postId, userId) != null;
+    }
+
+    @Override
+    public String upvotePost(long postId, Authentication authentication)
+    {
+        Post post = postDao.get(postId);
+        if (post == null) return "Invalid post ID!";
+
+        User user = userDao.getByUsername(authentication.getName());
+        if (checkUpvoteExist(postId, user.getId()))
+            return "Cannot upvote twice!";
+
+        post.setUpvote(post.getUpvote() + 1);
+        postDao.update(post);
+
+        PostUpvote postUpvote = new PostUpvote();
+        postUpvote.setPostId(postId);
+        postUpvote.setUserId(user.getId());
+        postUpvoteDao.add(postUpvote);
+
+        return null;
+    }
+
+    @Override
+    public String cancelUpvote(long postId, Authentication authentication)
+    {
+        Post post = postDao.get(postId);
+        if (post == null) return "Invalid post ID!";
+
+        User user = userDao.getByUsername(authentication.getName());
+        PostUpvote postUpvote = postUpvoteDao.getPostUpvote(postId, user.getId());
+        if (postUpvote == null)
+            return "Upvote does not exist!";
+
+        post.setUpvote(post.getUpvote() - 1);
+        postDao.update(post);
+
+        postUpvoteDao.delete(postUpvote.getId());
 
         return null;
     }
@@ -97,5 +143,14 @@ public class PostServiceImpl implements PostService
             if (type.getId() == postTypeId) return true;
         }
         return false;
+    }
+
+    private boolean hasPermission(Post post, Authentication authentication)
+    {
+        boolean isAdmin = false;
+        for (var auth : authentication.getAuthorities())
+            if (auth.getAuthority().equals("admin")) isAdmin = true;
+
+        return post.getUsername().equals(authentication.getName()) || isAdmin;
     }
 }

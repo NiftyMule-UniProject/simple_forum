@@ -2,9 +2,11 @@ package neu.edu.csye6220.finalproject.controller;
 
 import neu.edu.csye6220.finalproject.dao.CommentDao;
 import neu.edu.csye6220.finalproject.dao.PostDao;
+import neu.edu.csye6220.finalproject.dao.UserDao;
 import neu.edu.csye6220.finalproject.model.Comment;
 import neu.edu.csye6220.finalproject.model.Post;
 import neu.edu.csye6220.finalproject.model.PostType;
+import neu.edu.csye6220.finalproject.model.User;
 import neu.edu.csye6220.finalproject.service.CommentService;
 import neu.edu.csye6220.finalproject.service.PostService;
 import neu.edu.csye6220.finalproject.service.PostTypeService;
@@ -16,11 +18,14 @@ import org.springframework.web.servlet.ModelAndView;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class PostController
 {
+    public static final int POST_PER_PAGE = 10;
     @Autowired
     PostService postService;
 
@@ -30,21 +35,70 @@ public class PostController
     @Autowired
     PostTypeService postTypeService;
 
-    @GetMapping("/posts")
-    public ModelAndView posts()
+    @Autowired
+    UserDao userDao;
+
+    @GetMapping({"/posts", "/posts/{pageNum}"})
+    public ModelAndView posts(
+            @PathVariable(value = "pageNum", required = false) Integer pageNum,
+            Principal principal
+    )
     {
-        return new ModelAndView("posts", "posts", postService.list(10, 0));
+        ModelAndView view = new ModelAndView("posts");
+        List<Post> posts;
+        User user = userDao.getByUsername(principal.getName());
+
+        if (pageNum == null)
+            posts = postService.list(POST_PER_PAGE, 0);
+        else
+            posts = postService.list(POST_PER_PAGE, (pageNum - 1) * POST_PER_PAGE);
+
+        long totalPost = postService.getTotalPostsNum();
+        long totalPages = (totalPost + POST_PER_PAGE - 1) / POST_PER_PAGE;
+
+        Map<Long, Boolean> upvoteMap = new HashMap<>();
+        for (Post post : posts)
+        {
+            if (postService.checkUpvoteExist(post.getId(), user.getId()))
+                upvoteMap.put(post.getId(), true);
+            else
+                upvoteMap.put(post.getId(), false);
+        }
+
+        view.addObject("posts", posts);
+        view.addObject("upvoteMap", upvoteMap);
+        view.addObject("currentPage", pageNum);
+        view.addObject("totalPages", totalPages);
+        return view;
     }
 
     @GetMapping("/post/detail/{postId}")
-    public ModelAndView postDetail(@PathVariable(value="postId") Long postId)
+    public ModelAndView postDetail(
+            @PathVariable(value="postId") Long postId,
+            Principal principal
+    )
     {
-        ModelAndView ret = new ModelAndView("postDetail");
+        ModelAndView view = new ModelAndView("postDetail");
+
+        User user = userDao.getByUsername(principal.getName());
         Post post = postService.getPostById(postId);
-        ret.addObject("post", post);
         List<Comment> commentList = commentService.getCommentsByPostId(postId);
-        ret.addObject("comments", commentList);
-        return ret;
+        boolean postUpvote = postService.checkUpvoteExist(postId, user.getId());
+
+        Map<Long, Boolean> upvoteMap = new HashMap<>();
+        for (Comment comment : commentList)
+        {
+            if (commentService.checkUpvoteExist(comment.getId(), user.getId()))
+                upvoteMap.put(comment.getId(), true);
+            else
+                upvoteMap.put(comment.getId(), false);
+        }
+
+        view.addObject("postUpvote", postUpvote);
+        view.addObject("post", post);
+        view.addObject("comments", commentList);
+        view.addObject("upvoteMap", upvoteMap);
+        return view;
     }
 
     @GetMapping("/create_post")

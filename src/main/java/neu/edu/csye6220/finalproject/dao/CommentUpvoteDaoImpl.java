@@ -48,4 +48,13 @@ public class CommentUpvoteDaoImpl implements CommentUpvoteDao
         getSession().merge(commentUpvote);
         session.getTransaction().commit();
     }
+
+    @Override
+    public CommentUpvote getCommentUpvote(long commentId, long userId) {
+        String hql = "FROM CommentUpvote WHERE commentId=:postId AND userId=:userId";
+        return getSession().createQuery(hql, CommentUpvote.class)
+                .setParameter("postId", commentId)
+                .setParameter("userId", userId)
+                .uniqueResult();
+    }
 }

@@ -7,7 +7,10 @@
     <title>Posts</title>
 </head>
 <body>
+<%--------- Header ---------%>
 <%@include file="header.jsp"%>
+
+<%--------- Post list ---------%>
 <h1>Post list</h1>
 <c:forEach items="${posts}" var="post">
     Title: ${post.title} <br/>
@@ -16,20 +19,68 @@
     Content: ${post.content} <br/>
     Upvote: ${post.upvote} <br/>
     <a href="/post/detail/${post.id}">details</a> <br/>
+
+    <c:choose>
+        <c:when test="${upvoteMap.get(post.id)}"> <button onclick="cancelUpvotePost(${post.id})">Cancel upvote</button> </c:when>
+        <c:otherwise> <button onclick="upvotePost(${post.id})">Upvote</button> </c:otherwise>
+    </c:choose>
+
     <sec:authorize access="principal.username.equals('${post.username}') || hasAuthority('admin')">
         <button onclick="deletePost(${post.id})">delete</button>
     </sec:authorize>
+
     <hr>
 </c:forEach>
-<a href="${pageContext.request.contextPath}/create_post">Create new post</a>
+
+<%--------- New post ---------%>
+<a href="${pageContext.request.contextPath}/create_post">Create new post</a> <br>
+
+<%--------- Pagination ---------%>
+<c:forEach begin="1" end="${totalPages}" var="page">
+    <c:choose>
+        <c:when test="${page == currentPage}">${page}</c:when>
+        <c:otherwise><a href="${pageContext.request.contextPath}/posts/${page}">${page}</a></c:otherwise>
+    </c:choose>
+    &nbsp;
+</c:forEach>
 </body>
+
 <script>
     function deletePost(postId) {
         $.ajax("/api/post/" + postId, {
             method: "DELETE",
             success: function (data, status, xhr) {
-                // TODO - update comment list
-                alert(data)
+                // TODO - update post list
+                // alert(data)
+                location.reload()
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting post: " + jqXhr.responseText)
+            }
+        })
+    }
+
+    function upvotePost(postId) {
+        $.ajax("/api/post/" + postId + "/upvote", {
+            method: "POST",
+            success: function (data, status, xhr) {
+                // TODO - update vote button
+                // alert(data)
+                location.reload()
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting post: " + jqXhr.responseText)
+            }
+        })
+    }
+
+    function cancelUpvotePost(postId) {
+        $.ajax("/api/post/" + postId + "/upvote", {
+            method: "DELETE",
+            success: function (data, status, xhr) {
+                // TODO - update vote button
+                // alert(data)
+                location.reload()
             },
             error: function (jqXhr, textStatus, errorMessage) {
                 alert("something went wrong when deleting post: " + jqXhr.responseText)

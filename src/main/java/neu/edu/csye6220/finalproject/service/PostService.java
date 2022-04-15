@@ -23,4 +23,15 @@ public interface PostService
             long postId,
             Authentication authentication
     );
+
+    long getTotalPostsNum();
+
+    boolean checkUpvoteExist(long postId, long userId);
+
+    String upvotePost(
+            long postId,
+            Authentication authentication
+    );
+
+    String cancelUpvote(long postId, Authentication authentication);
 }
