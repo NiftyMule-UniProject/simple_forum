@@ -1,7 +1,5 @@
 package neu.edu.csye6220.finalproject.model;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 
 @Entity

@@ -45,8 +45,9 @@ public class LoginController
         }
         else
         {
-            ret.setViewName("/");
+            ret.setViewName("redirect:/");
         }
+
         return ret;
     }
 }

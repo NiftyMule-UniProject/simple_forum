@@ -11,4 +11,6 @@ public interface CommentUpvoteDao
     CommentUpvote get(Long id);
 
     void update(CommentUpvote commentUpvote);
+
+    CommentUpvote getCommentUpvote(long commentId, long userId);
 }

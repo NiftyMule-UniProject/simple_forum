@@ -63,4 +63,11 @@ public class PostDaoImpl implements PostDao
                 .setFirstResult(offset)
                 .getResultList();
     }
+
+    @Override
+    public long getTotalPostsNum()
+    {
+        String hql = "SELECT count(id) FROM Post";
+        return getSession().createQuery(hql, Long.class).uniqueResult();
+    }
 }

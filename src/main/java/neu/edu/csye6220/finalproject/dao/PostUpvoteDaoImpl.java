@@ -48,4 +48,13 @@ public class PostUpvoteDaoImpl implements PostUpvoteDao
         getSession().merge(postUpvote);
         session.getTransaction().commit();
     }
+
+    @Override
+    public PostUpvote getPostUpvote(long postId, long userId) {
+        String hql = "FROM PostUpvote WHERE postId=:postId AND userId=:userId";
+        return getSession().createQuery(hql, PostUpvote.class)
+                .setParameter("postId", postId)
+                .setParameter("userId", userId)
+                .uniqueResult();
+    }
 }

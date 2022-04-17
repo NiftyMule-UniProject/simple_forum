@@ -36,6 +36,7 @@ public class SecurityConf extends WebSecurityConfigurerAdapter
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/register").permitAll()
+                .antMatchers("/admin", "/api/admin/**").hasAnyAuthority("superuser")
                 .anyRequest().authenticated()
                 .and()
 

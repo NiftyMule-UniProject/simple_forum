@@ -17,13 +17,10 @@ public class Post
     @Column(name = "type_id", nullable = false)
     private Long typeId;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
     @Column(name = "creation_time", nullable = false)
     private Timestamp creationTime;
 
-    @Column(name = "last_comment_time", nullable = false)
+    @Column(name = "last_comment_time")
     private Timestamp lastCommentTime;
 
     @Column(name = "upvote", nullable = false)
@@ -36,6 +33,19 @@ public class Post
 
     @Column(name = "username", nullable = false)
     private String username;
+
+    @Column(name = "title")
+    private String title;
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
 
     public String getUsername()
     {
@@ -55,11 +65,6 @@ public class Post
     public void setContent(String content)
     {
         this.content = content;
-    }
-
-    public void setUserId(Long userId)
-    {
-        this.userId = userId;
     }
 
     public void setCreationTime(Timestamp creationTime)
@@ -90,11 +95,6 @@ public class Post
     public Timestamp getCreationTime()
     {
         return creationTime;
-    }
-
-    public Long getUserId()
-    {
-        return userId;
     }
 
     public Long getTypeId()
