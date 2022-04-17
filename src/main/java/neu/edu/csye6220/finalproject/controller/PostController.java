@@ -10,6 +10,7 @@ import neu.edu.csye6220.finalproject.model.User;
 import neu.edu.csye6220.finalproject.service.CommentService;
 import neu.edu.csye6220.finalproject.service.PostService;
 import neu.edu.csye6220.finalproject.service.PostTypeService;
+import neu.edu.csye6220.finalproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class PostController
     PostTypeService postTypeService;
 
     @Autowired
-    UserDao userDao;
+    UserService userService;
 
     @GetMapping({"/posts", "/posts/{pageNum}"})
     public ModelAndView posts(
@@ -46,7 +47,7 @@ public class PostController
     {
         ModelAndView view = new ModelAndView("posts");
         List<Post> posts;
-        User user = userDao.getByUsername(principal.getName());
+        User user = userService.getUserByUsername(principal.getName());
 
         if (pageNum == null)
             posts = postService.list(POST_PER_PAGE, 0);
@@ -80,7 +81,7 @@ public class PostController
     {
         ModelAndView view = new ModelAndView("postDetail");
 
-        User user = userDao.getByUsername(principal.getName());
+        User user = userService.getUserByUsername(principal.getName());
         Post post = postService.getPostById(postId);
         List<Comment> commentList = commentService.getCommentsByPostId(postId);
         boolean postUpvote = postService.checkUpvoteExist(postId, user.getId());
@@ -131,48 +132,5 @@ public class PostController
         view.addObject("types", postTypes);
         view.addObject("errMsg", errMsg);
         return view;
-    }
-
-
-    // TODO - To be deleted
-    @Autowired
-    PostDao postDao;
-    @Autowired
-    CommentDao commentDao;
-    @GetMapping("/populate_posts")
-    @ResponseBody
-    public String populatePosts(Post post)
-    {
-        post.setTitle("This is a title");
-        post.setUsername("username");
-        post.setContent("This is a test content!");
-        post.setCreationTime(Timestamp.from(Instant.now()));
-        post.setUpvote(5);
-        post.setLastCommentTime(post.getCreationTime());
-        post.setTypeId(1L);
-
-        postDao.add(post);
-
-        Comment comment1 = new Comment();
-
-        comment1.setUsername("username");
-        comment1.setContent("Test content!");
-        comment1.setPostId(post.getId());
-        comment1.setCreationTime(Timestamp.from(Instant.now()));
-        comment1.setUpvote(10);
-
-        commentDao.add(comment1);
-
-        Comment comment2 = new Comment();
-
-        comment2.setUsername("username");
-        comment2.setContent("Test content!");
-        comment2.setPostId(post.getId());
-        comment2.setCreationTime(Timestamp.from(Instant.now()));
-        comment2.setUpvote(10);
-
-        commentDao.add(comment2);
-
-        return "populate successful!";
     }
 }

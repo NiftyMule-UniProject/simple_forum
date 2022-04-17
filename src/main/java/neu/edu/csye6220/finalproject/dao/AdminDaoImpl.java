@@ -67,4 +67,11 @@ public class AdminDaoImpl implements AdminDao
 
         session.getTransaction().commit();
     }
+
+    @Override
+    public List<Admin> list()
+    {
+        String hql = "FROM Admin";
+        return getSession().createQuery(hql, Admin.class).getResultList();
+    }
 }

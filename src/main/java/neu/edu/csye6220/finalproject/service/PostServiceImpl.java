@@ -137,7 +137,7 @@ public class PostServiceImpl implements PostService
 
     private boolean validatePostType(int postTypeId)
     {
-        List<PostType> types = postTypeDao.list();
+        List<PostType> types = postTypeDao.list(false);
         for (PostType type : types)
         {
             if (type.getId() == postTypeId) return true;

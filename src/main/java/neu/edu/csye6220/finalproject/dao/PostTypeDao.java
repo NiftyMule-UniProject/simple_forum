@@ -14,5 +14,7 @@ public interface PostTypeDao
 
     void update(PostType postType);
 
-    List<PostType> list();
+    PostType getPostTypeByName(String postTypeName);
+
+    List<PostType> list(boolean refreshCache);
 }

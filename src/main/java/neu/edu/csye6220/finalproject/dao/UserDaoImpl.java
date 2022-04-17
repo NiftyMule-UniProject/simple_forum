@@ -67,4 +67,22 @@ public class UserDaoImpl implements UserDao
             return null;
         return (User) results.get(0);
     }
+
+    @Override
+    public List<User> getUserListByIds(List<Long> userIds)
+    {
+        String hql = "FROM User WHERE id in (:userIdList)";
+        return getSession().createQuery(hql, User.class)
+                .setParameterList("userIdList", userIds)
+                .getResultList();
+    }
+
+    @Override
+    public List<User> searchUsersByKeyword(String keyword)
+    {
+        String hql = "FROM User WHERE name like :keyword";
+        return getSession().createQuery(hql, User.class)
+                .setParameter("keyword", "%" + keyword + "%")
+                .getResultList();
+    }
 }

@@ -6,9 +6,11 @@
 <head>
     <title>Post detail</title>
 </head>
-<body>
+<body style="padding-bottom: 100vh">
 <%@include file="header.jsp"%>
 <h2><a href="${pageContext.request.contextPath}/posts">Posts</a></h2>
+
+<%---- Post details ----%>
 <h1>Post detail</h1>
 Title: ${post.title} <br/>
 Creation time: ${post.creationTime} <br/>
@@ -19,15 +21,24 @@ Upvote: ${post.upvote} <br/>
     <c:when test="${postUpvote}"> <button onclick="cancelUpvotePost(${post.id})">Cancel upvote</button> </c:when>
     <c:otherwise> <button onclick="upvotePost(${post.id})">Upvote</button> </c:otherwise>
 </c:choose>
+<sec:authorize access="principal.username.equals('${post.username}') || hasAuthority('admin')">
+    <button onclick="deletePost(${post.id})">delete</button>
+</sec:authorize>
 <hr>
 <hr>
+
+<%---- Comments ----%>
 <c:forEach items="${comments}" var="comment">
+<div id="${comment.id}">
     Comment ID: ${comment.id} <br/>
     Creation time: ${comment.creationTime} <br/>
-    Refer to: ${comment.referToCommentId} <br/>
+    <c:if test="${comment.referToCommentId != null}">
+        Refer to: <a href="#${comment.referToCommentId}"> ${comment.referToCommentId} </a><br/>
+    </c:if>
     Author: ${comment.username} <br/>
     Content: ${comment.content} <br/>
     Upvote: ${comment.upvote} <br/>
+    <button onclick="$('#referTo').val(${comment.id})">Refer</button>
     <c:choose>
         <c:when test="${upvoteMap.get(comment.id)}"> <button onclick="cancelUpvoteComment(${post.id}, ${comment.id})">Cancel upvote</button> </c:when>
         <c:otherwise> <button onclick="upvoteComment(${post.id}, ${comment.id})">Upvote</button> </c:otherwise>
@@ -36,11 +47,13 @@ Upvote: ${post.upvote} <br/>
         <button onclick="deleteComment(${post.id}, ${comment.id})">delete</button>
     </sec:authorize>
     <hr>
+</div>
 </c:forEach>
 
+<%---- New comment form ----%>
 <form id="comment_creation">
-    <label for="referTo">Refer To:</label>
-    <input type="text" id="referTo" name="referTo"> <br/>
+    <label for="referTo">Refer To:</label> <button onclick="$('#referTo').val(''); return false;">Clear</button>
+    <input type="text" id="referTo" name="referTo" readonly> <br/>
 
     <label for="content">Content</label>
     <textarea id="content" name="content"></textarea><br/>
@@ -66,6 +79,20 @@ Upvote: ${post.upvote} <br/>
         })
         return false
     })
+
+    function deletePost(postId) {
+        $.ajax("/api/post/" + postId, {
+            method: "DELETE",
+            success: function (data, status, xhr) {
+                // TODO - update post list
+                // alert(data)
+                window.location.replace('/posts')
+            },
+            error: function (jqXhr, textStatus, errorMessage) {
+                alert("something went wrong when deleting post: " + jqXhr.responseText)
+            }
+        })
+    }
 
     function upvotePost(postId) {
         $.ajax("/api/post/" + postId + "/upvote", {

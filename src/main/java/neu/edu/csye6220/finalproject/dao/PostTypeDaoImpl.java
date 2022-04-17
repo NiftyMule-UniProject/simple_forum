@@ -57,10 +57,19 @@ public class PostTypeDaoImpl implements PostTypeDao
     }
 
     @Override
-    public List<PostType> list() {
+    public PostType getPostTypeByName(String postTypeName)
+    {
+        String hql = "FROM PostType WHERE typeName = :postTypeName";
+        return getSession().createQuery(hql, PostType.class)
+                .setParameter("postTypeName", postTypeName)
+                .uniqueResult();
+    }
+
+    @Override
+    public List<PostType> list(boolean refreshCache) {
         // Post types are unlikely to be changed when running the application,
         // so we cached the list of post types
-        if (types == null)
+        if (types == null || refreshCache)
         {
             String hql = "FROM PostType";
             types = getSession().createQuery(hql, PostType.class).getResultList();
