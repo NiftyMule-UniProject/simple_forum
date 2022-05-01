@@ -1,8 +1,5 @@
 package neu.edu.csye6220.finalproject.controller;
 
-import neu.edu.csye6220.finalproject.dao.CommentDao;
-import neu.edu.csye6220.finalproject.dao.PostDao;
-import neu.edu.csye6220.finalproject.dao.UserDao;
 import neu.edu.csye6220.finalproject.model.Comment;
 import neu.edu.csye6220.finalproject.model.Post;
 import neu.edu.csye6220.finalproject.model.PostType;
@@ -17,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

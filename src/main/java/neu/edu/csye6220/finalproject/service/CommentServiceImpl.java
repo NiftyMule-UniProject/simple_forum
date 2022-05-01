@@ -1,9 +1,6 @@
 package neu.edu.csye6220.finalproject.service;
 
-import neu.edu.csye6220.finalproject.dao.CommentDao;
-import neu.edu.csye6220.finalproject.dao.CommentUpvoteDao;
-import neu.edu.csye6220.finalproject.dao.PostDao;
-import neu.edu.csye6220.finalproject.dao.UserDao;
+import neu.edu.csye6220.finalproject.dao.*;
 import neu.edu.csye6220.finalproject.model.Comment;
 import neu.edu.csye6220.finalproject.model.CommentUpvote;
 import neu.edu.csye6220.finalproject.model.Post;
@@ -12,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
 @Service
+@Transactional
 public class CommentServiceImpl implements CommentService
 {
     @Autowired
@@ -31,6 +30,9 @@ public class CommentServiceImpl implements CommentService
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    AdminDao adminDao;
 
     @Override
     public List<Comment> getCommentsByPostId(Long postId)
@@ -79,14 +81,14 @@ public class CommentServiceImpl implements CommentService
         Comment comment = commentDao.get(commentId);
         if (comment == null) return "Invalid comment ID!";
 
-        boolean isAdmin = false;
-        for (var auth : authentication.getAuthorities())
-            if (auth.getAuthority().equals("admin")) isAdmin = true;
+        boolean isAdmin = adminDao.getByUserId(userDao.getByUsername(authentication.getName()).getId()) != null;
 
         if (!comment.getUsername().equals(authentication.getName()) && !isAdmin)
             return "Unauthorized action";
 
         commentDao.delete(commentId);
+        commentUpvoteDao.deleteByCommentId(commentId);
+
         return null;
     }
 

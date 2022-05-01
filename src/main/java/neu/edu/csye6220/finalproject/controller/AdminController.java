@@ -1,6 +1,5 @@
 package neu.edu.csye6220.finalproject.controller;
 
-import neu.edu.csye6220.finalproject.dao.UserDao;
 import neu.edu.csye6220.finalproject.model.PostType;
 import neu.edu.csye6220.finalproject.model.User;
 import neu.edu.csye6220.finalproject.service.PostTypeService;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller

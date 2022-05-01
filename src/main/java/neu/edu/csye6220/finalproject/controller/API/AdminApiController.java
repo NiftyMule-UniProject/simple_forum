@@ -73,6 +73,8 @@ public class AdminApiController
             return null;
         }
         List<String> usernames = users.stream().map(User::getName).collect(Collectors.toList());
+        // remove users that are already admins
+        usernames.removeAll(userService.getAllAdmins().stream().map(User::getName).collect(Collectors.toList()));
 
         return new Gson().toJson(usernames);
     }

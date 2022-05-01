@@ -13,4 +13,6 @@ public interface CommentUpvoteDao
     void update(CommentUpvote commentUpvote);
 
     CommentUpvote getCommentUpvote(long commentId, long userId);
+
+    void deleteByCommentId(Long commentId);
 }

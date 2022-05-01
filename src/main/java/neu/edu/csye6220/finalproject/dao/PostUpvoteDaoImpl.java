@@ -18,22 +18,13 @@ public class PostUpvoteDaoImpl implements PostUpvoteDao
 
     @Override
     public void add(PostUpvote postUpvote) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.save(postUpvote);
-
-        session.getTransaction().commit();
+        getSession().save(postUpvote);
     }
 
     @Override
     public void delete(Long id) {
         PostUpvote postUpvote = get(id);
-
-        Session session = getSession();
-        session.beginTransaction();
         getSession().delete(postUpvote);
-        session.getTransaction().commit();
     }
 
     @Override
@@ -43,10 +34,7 @@ public class PostUpvoteDaoImpl implements PostUpvoteDao
 
     @Override
     public void update(PostUpvote postUpvote) {
-        Session session = getSession();
-        session.beginTransaction();
         getSession().merge(postUpvote);
-        session.getTransaction().commit();
     }
 
     @Override
@@ -56,5 +44,13 @@ public class PostUpvoteDaoImpl implements PostUpvoteDao
                 .setParameter("postId", postId)
                 .setParameter("userId", userId)
                 .uniqueResult();
+    }
+
+    @Override
+    public void deleteByPostId(Long postId) {
+        String hql = "DELETE FROM PostUpvote WHERE postId=:postId";
+        getSession().createQuery(hql)
+                .setParameter("postId", postId)
+                .executeUpdate();
     }
 }

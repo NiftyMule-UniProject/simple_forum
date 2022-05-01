@@ -20,23 +20,13 @@ public class PostDaoImpl implements PostDao
 
     @Override
     public void add(Post post) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.save(post);
-
-        session.getTransaction().commit();
+        getSession().save(post);
     }
 
     @Override
     public void delete(Long id) {
         Post post = get(id);
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.delete(post);
-
-        session.getTransaction().commit();
+        getSession().delete(post);
     }
 
     @Override
@@ -46,12 +36,7 @@ public class PostDaoImpl implements PostDao
 
     @Override
     public void update(Post post) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.merge(post);
-
-        session.getTransaction().commit();
+        getSession().merge(post);
     }
 
     @Override

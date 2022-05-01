@@ -20,23 +20,13 @@ public class CommentDaoImpl implements CommentDao
 
     @Override
     public void add(Comment comment) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.save(comment);
-
-        session.getTransaction().commit();
+        getSession().save(comment);
     }
 
     @Override
     public void delete(Long id) {
         Comment comment = get(id);
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.delete(comment);
-
-        session.getTransaction().commit();
+        getSession().delete(comment);
     }
 
     @Override
@@ -47,18 +37,14 @@ public class CommentDaoImpl implements CommentDao
     @Override
     public List<Comment> getCommentsByPostId(Long postId) {
         String hql = "FROM Comment WHERE postId = :postId";
-        return getSession().createQuery(hql, Comment.class)
+        return getSession()
+                .createQuery(hql, Comment.class)
                 .setParameter("postId", postId)
                 .getResultList();
     }
 
     @Override
     public void update(Comment comment) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.merge(comment);
-
-        session.getTransaction().commit();
+        getSession().merge(comment);
     }
 }

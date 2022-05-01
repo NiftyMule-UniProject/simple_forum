@@ -22,23 +22,13 @@ public class PostTypeDaoImpl implements PostTypeDao
 
     @Override
     public void add(PostType postType) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.save(postType);
-
-        session.getTransaction().commit();
+        getSession().save(postType);
     }
 
     @Override
     public void delete(Long id) {
         PostType postType = get(id);
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.delete(postType);
-
-        session.getTransaction().commit();
+        getSession().delete(postType);
     }
 
     @Override
@@ -48,12 +38,7 @@ public class PostTypeDaoImpl implements PostTypeDao
 
     @Override
     public void update(PostType postType) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.merge(postType);
-
-        session.getTransaction().commit();
+        getSession().merge(postType);
     }
 
     @Override

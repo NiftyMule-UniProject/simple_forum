@@ -13,4 +13,6 @@ public interface PostUpvoteDao
     void update(PostUpvote postUpvote);
 
     PostUpvote getPostUpvote(long postId, long userId);
+
+    void deleteByPostId(Long postId);
 }

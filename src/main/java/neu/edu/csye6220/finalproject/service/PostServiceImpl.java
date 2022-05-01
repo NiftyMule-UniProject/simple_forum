@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 
 @Service
+@Transactional
 public class PostServiceImpl implements PostService
 {
     @Autowired
@@ -22,6 +24,9 @@ public class PostServiceImpl implements PostService
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    AdminDao adminDao;
 
     @Autowired
     CommentDao commentDao;
@@ -77,6 +82,7 @@ public class PostServiceImpl implements PostService
             return "Unauthorized action";
 
         postDao.delete(postId);
+        postUpvoteDao.deleteByPostId(postId);
         for (Comment comment : commentDao.getCommentsByPostId(postId))
             commentDao.delete(comment.getId());
 
@@ -147,9 +153,7 @@ public class PostServiceImpl implements PostService
 
     private boolean hasPermission(Post post, Authentication authentication)
     {
-        boolean isAdmin = false;
-        for (var auth : authentication.getAuthorities())
-            if (auth.getAuthority().equals("admin")) isAdmin = true;
+        boolean isAdmin = adminDao.getByUserId(userDao.getByUsername(authentication.getName()).getId()) != null;
 
         return post.getUsername().equals(authentication.getName()) || isAdmin;
     }

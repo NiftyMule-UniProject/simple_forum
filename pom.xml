@@ -15,11 +15,17 @@
     <description>finalProject</description>
     <properties>
         <java.version>11</java.version>
+        <start-class>neu.edu.csye6220.finalproject.FinalProjectApplication</start-class>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
         </dependency>
 
         <dependency>
@@ -80,17 +86,11 @@
 
     </dependencies>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/webapp</directory>
-                <targetPath>META-INF/resources</targetPath>
-                <includes>
-                    <include>*.*</include>
-                </includes>
-            </resource>
-        </resources>
+    <packaging>war</packaging>
 
+    <build>
+
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

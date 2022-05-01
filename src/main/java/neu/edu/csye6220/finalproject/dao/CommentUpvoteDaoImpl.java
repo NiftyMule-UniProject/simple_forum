@@ -18,35 +18,23 @@ public class CommentUpvoteDaoImpl implements CommentUpvoteDao
 
     @Override
     public void add(CommentUpvote commentUpvote) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.save(commentUpvote);
-
-        session.getTransaction().commit();
+        getSession().save(commentUpvote);
     }
 
     @Override
     public void delete(Long id) {
         CommentUpvote commentUpvote = get(id);
-
-        Session session = getSession();
-        session.beginTransaction();
         getSession().delete(commentUpvote);
-        session.getTransaction().commit();
     }
 
     @Override
     public CommentUpvote get(Long id) {
-        return (CommentUpvote) getSession().get(CommentUpvote.class, id);
+        return getSession().get(CommentUpvote.class, id);
     }
 
     @Override
     public void update(CommentUpvote commentUpvote) {
-        Session session = getSession();
-        session.beginTransaction();
         getSession().merge(commentUpvote);
-        session.getTransaction().commit();
     }
 
     @Override
@@ -56,5 +44,13 @@ public class CommentUpvoteDaoImpl implements CommentUpvoteDao
                 .setParameter("postId", commentId)
                 .setParameter("userId", userId)
                 .uniqueResult();
+    }
+
+    @Override
+    public void deleteByCommentId(Long commentId) {
+        String hql = "DELETE FROM CommentUpvote WHERE commentId=:commentId";
+        getSession().createQuery(hql)
+                .setParameter("commentId", commentId)
+                .executeUpdate();
     }
 }

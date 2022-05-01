@@ -1,6 +1,7 @@
 package neu.edu.csye6220.finalproject.dao;
 
 import neu.edu.csye6220.finalproject.model.Admin;
+import neu.edu.csye6220.finalproject.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +22,13 @@ public class AdminDaoImpl implements AdminDao
     @Override
     public void add(Admin admin)
     {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.save(admin);
-
-        session.getTransaction().commit();
+        getSession().save(admin);
     }
 
     @Override
     public void delete(Long id) {
         Admin admin = get(id);
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.delete(admin);
-
-        session.getTransaction().commit();
+        getSession().delete(admin);
     }
 
     @Override
@@ -49,8 +40,8 @@ public class AdminDaoImpl implements AdminDao
     public Admin getByUserId(Long userId)
     {
         String hql = "FROM Admin WHERE userId = :userid";
-        List results = getSession()
-                .createQuery(hql)
+        List<Admin> results = getSession()
+                .createQuery(hql, Admin.class)
                 .setParameter("userid", userId)
                 .getResultList();
         if (results.isEmpty())
@@ -60,12 +51,7 @@ public class AdminDaoImpl implements AdminDao
 
     @Override
     public void update(Admin admin) {
-        Session session = getSession();
-        session.beginTransaction();
-
-        session.merge(admin);
-
-        session.getTransaction().commit();
+        getSession().merge(admin);
     }
 
     @Override
